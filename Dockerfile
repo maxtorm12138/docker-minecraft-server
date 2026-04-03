@@ -23,16 +23,6 @@ EXPOSE 25565
 ARG APPS_REV=1
 ARG GITHUB_BASEURL=https://github.com
 
-# renovate: datasource=github-releases packageName=itzg/restify
-ARG RESTIFY_VERSION=1.7.12
-RUN curl -fsSL ${GITHUB_BASEURL}/itzg/restify/releases/download/${RESTIFY_VERSION}/restify_${RESTIFY_VERSION}_${TARGETOS}_${TARGETARCH}${TARGETVARIANT}.tar.gz \
-  | tar -xzf - -C /usr/local/bin restify
-
-# renovate: datasource=github-releases packageName=itzg/rcon-cli
-ARG RCON_CLI_VERSION=1.7.4
-RUN curl -fsSL ${GITHUB_BASEURL}/itzg/rcon-cli/releases/download/${RCON_CLI_VERSION}/rcon-cli_${RCON_CLI_VERSION}_${TARGETOS}_${TARGETARCH}${TARGETVARIANT}.tar.gz \
-  | tar -xzf - -C /usr/local/bin rcon-cli
-
 # renovate: datasource=github-releases packageName=itzg/mc-monitor
 ARG MC_MONITOR_VERSION=0.16.1
 RUN curl -fsSL ${GITHUB_BASEURL}/itzg/mc-monitor/releases/download/${MC_MONITOR_VERSION}/mc-monitor_${MC_MONITOR_VERSION}_${TARGETOS}_${TARGETARCH}${TARGETVARIANT}.tar.gz \
@@ -58,25 +48,17 @@ WORKDIR /data
 
 STOPSIGNAL SIGTERM
 
-# End user MUST set EULA and change RCON_PASSWORD
 ENV TYPE=GTNH VERSION=LATEST EULA="" UID=1000 GID=1000 LC_ALL=en_US.UTF-8
 
 COPY --chmod=755 scripts/start* /image/scripts/
 
-# Backward compatible shim for those with legacy entrypoint
-COPY --chmod=755 <<EOF /start
-#!/bin/bash
-exec /image/scripts/start
-EOF
-
-COPY --chmod=755 scripts/auto/* /image/scripts/auto/
 COPY --chmod=755 scripts/shims/* /image/scripts/shims/
 RUN ln -s /image/scripts/shims/* /usr/local/bin/
 COPY --chmod=755 files/* /image/
 
 RUN curl -fsSL -o /image/Log4jPatcher.jar https://github.com/CreeperHost/Log4jPatcher/releases/download/v1.0.1/Log4jPatcher-1.0.1.jar
 
-RUN dos2unix /image/scripts/start* /image/scripts/auto/*
+RUN dos2unix /image/scripts/start*
 
 ENTRYPOINT [ "/image/scripts/start" ]
 HEALTHCHECK --start-period=2m --retries=2 --interval=30s CMD mc-health

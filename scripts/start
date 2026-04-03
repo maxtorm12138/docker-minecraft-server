@@ -10,9 +10,6 @@
 
 umask "${UMASK:=0002}"
 
-# Remove from previous run and do this as elevated user since file used to be created before demoting
-rm -f "$HOME/.rcon-cli.env"
-
 if ! isTrue "${SKIP_SUDO:-false}" && [ "$(id -u)" = 0 ]; then
   runAsUser=minecraft
   runAsGroup=minecraft

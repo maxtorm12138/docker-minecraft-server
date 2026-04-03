@@ -135,4 +135,4 @@ fi
 [[ -f ${worldDownload} ]] && rm ${worldDownload}
 [[ -d ${tmpWorldData} ]] && rm -rf ${tmpWorldData}
 
-exec "$(dirname "$0")/start-setupDatapack" "$@"
+exec "$(dirname "$0")/start-setupModpack" "$@"

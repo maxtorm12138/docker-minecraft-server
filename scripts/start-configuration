@@ -7,18 +7,6 @@ IFS=$'\n\t'
 
 : "${EULA:=}"
 : "${PROXY:=}"
-: "${ENABLE_AUTOPAUSE:=false}"
-: "${ENABLE_AUTOSTOP:=false}"
-: "${RCON_CMDS_STARTUP:=}"
-: "${RCON_CMDS_ON_CONNECT:=}"
-: "${RCON_CMDS_ON_DISCONNECT:=}"
-: "${RCON_CMDS_FIRST_CONNECT:=}"
-: "${RCON_CMDS_LAST_DISCONNECT:=}"
-: "${RCON_CMDS_PERIOD:=10}"
-: "${ENABLE_RCON:=true}"
-: "${RCON_PORT:=25575}"
-export ENABLE_RCON RCON_PORT
-
 : "${MEMORY=1G}"
 : "${INIT_MEMORY=${MEMORY}}"
 : "${MAX_MEMORY=${MEMORY}}"
@@ -56,48 +44,6 @@ if isTrue "${DEBUG_MEMORY:-false}"; then
   log "Memory usage and availability (in MB)"
   uname -pars | applyLogPrefix
   free -m | applyLogPrefix
-fi
-
-##########################################
-# Setup RCON password
-
-if isTrue "${ENABLE_RCON:-true}"; then
-  # turn off debug output
-  set +x
-
-  if [[ -v RCON_PASSWORD_FILE ]]; then
-    if [ ! -e "${RCON_PASSWORD_FILE}" ]; then
-      log ""
-      logError "Initial RCON password file ${RCON_PASSWORD_FILE} does not seems to exist."
-      logError "Please ensure your configuration."
-      logError "If you are using Docker Secrets feature, please check this for further information: "
-      logError " https://docs.docker.com/engine/swarm/secrets"
-      log ""
-      exit 1
-    else
-      RCON_PASSWORD=$(cat "${RCON_PASSWORD_FILE}")
-      export RCON_PASSWORD
-    fi
-  elif ! [[ -v RCON_PASSWORD ]]; then
-    RCON_PASSWORD=$(openssl rand -hex 12)
-    export RCON_PASSWORD
-  fi
-
-  # For rcon-cli access running via exec, which by default is running as root
-  echo "password=${RCON_PASSWORD}" > "$HOME/.rcon-cli.env"
-  echo "password: \"${RCON_PASSWORD}\"" > "$HOME/.rcon-cli.yaml"
-
-  isDebugging && set -x
-else
-  rm -f "$HOME/.rcon-cli.env" "$HOME/.rcon-cli.yaml"
-fi
-
-##########################################
-# Auto-pause/stop
-
-if isTrue "${ENABLE_AUTOPAUSE}" && isTrue "${ENABLE_AUTOSTOP}"; then
-    logError "ENABLE_AUTOPAUSE=true is incompatible with ENABLE_AUTOSTOP=true"
-    exit 1
 fi
 
 proxyArgs=()
@@ -154,23 +100,5 @@ cd /data || exit 1
 
 export DECLARED_TYPE=${TYPE^^}
 export DECLARED_VERSION="$VERSION"
-
-if isTrue "${ENABLE_AUTOPAUSE}"; then
-  "$(dirname "$0")/start-autopause"
-elif isTrue "${ENABLE_AUTOSTOP}"; then
-  "$(dirname "$0")/start-autostop"
-fi
-
-if
-  [[ "$RCON_CMDS_STARTUP" ]] ||
-  [[ "$RCON_CMDS_ON_CONNECT" ]] ||
-  [[ "$RCON_CMDS_ON_DISCONNECT" ]] ||
-  [[ "$RCON_CMDS_FIRST_CONNECT" ]] ||
-  [[ "$RCON_CMDS_LAST_DISCONNECT" ]]
-then
-  log "Starting RCON commands"
-  # shellcheck source=start-rconcmds
-  "$(dirname "$0")/start-rconcmds"
-fi
 
 exec "$(dirname "$0")/start-deployGTNH" "$@"
