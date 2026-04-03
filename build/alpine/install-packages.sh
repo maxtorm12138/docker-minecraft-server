@@ -32,6 +32,7 @@ apk add --no-cache -U \
     libwebp \
     libcap \
     numactl \
+    dos2unix \
     ${EXTRA_ALPINE_PACKAGES}
 
 # Download and install patched knockd
