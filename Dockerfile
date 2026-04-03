@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=azul/zulu-openjdk-alpine:21.0.10-jre
+ARG BASE_IMAGE=azul/zulu-openjdk-alpine:25.0.2-jre
 FROM ${BASE_IMAGE}
 
 # hook into docker BuildKit --platform support
