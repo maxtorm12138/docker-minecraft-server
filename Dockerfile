@@ -23,34 +23,25 @@ EXPOSE 25565
 ARG APPS_REV=1
 ARG GITHUB_BASEURL=https://github.com
 
-# renovate: datasource=github-releases packageName=itzg/easy-add
-ARG EASY_ADD_VERSION=0.8.11
-ADD ${GITHUB_BASEURL}/itzg/easy-add/releases/download/${EASY_ADD_VERSION}/easy-add_${TARGETOS}_${TARGETARCH}${TARGETVARIANT} /usr/bin/easy-add
-RUN chmod +x /usr/bin/easy-add
-
 # renovate: datasource=github-releases packageName=itzg/restify
 ARG RESTIFY_VERSION=1.7.12
-RUN easy-add --var os=${TARGETOS} --var arch=${TARGETARCH}${TARGETVARIANT} \
-  --var version=${RESTIFY_VERSION} --var app=restify --file {{.app}} \
-  --from ${GITHUB_BASEURL}/itzg/{{.app}}/releases/download/{{.version}}/{{.app}}_{{.version}}_{{.os}}_{{.arch}}.tar.gz
+RUN curl -fsSL ${GITHUB_BASEURL}/itzg/restify/releases/download/${RESTIFY_VERSION}/restify_${RESTIFY_VERSION}_${TARGETOS}_${TARGETARCH}${TARGETVARIANT}.tar.gz \
+  | tar -xzf - -C /usr/local/bin restify
 
 # renovate: datasource=github-releases packageName=itzg/rcon-cli
 ARG RCON_CLI_VERSION=1.7.4
-RUN easy-add --var os=${TARGETOS} --var arch=${TARGETARCH}${TARGETVARIANT} \
-  --var version=${RCON_CLI_VERSION} --var app=rcon-cli --file {{.app}} \
-  --from ${GITHUB_BASEURL}/itzg/{{.app}}/releases/download/{{.version}}/{{.app}}_{{.version}}_{{.os}}_{{.arch}}.tar.gz
+RUN curl -fsSL ${GITHUB_BASEURL}/itzg/rcon-cli/releases/download/${RCON_CLI_VERSION}/rcon-cli_${RCON_CLI_VERSION}_${TARGETOS}_${TARGETARCH}${TARGETVARIANT}.tar.gz \
+  | tar -xzf - -C /usr/local/bin rcon-cli
 
 # renovate: datasource=github-releases packageName=itzg/mc-monitor
 ARG MC_MONITOR_VERSION=0.16.1
-RUN easy-add --var os=${TARGETOS} --var arch=${TARGETARCH}${TARGETVARIANT} \
-  --var version=${MC_MONITOR_VERSION} --var app=mc-monitor --file {{.app}} \
-  --from ${GITHUB_BASEURL}/itzg/{{.app}}/releases/download/{{.version}}/{{.app}}_{{.version}}_{{.os}}_{{.arch}}.tar.gz
+RUN curl -fsSL ${GITHUB_BASEURL}/itzg/mc-monitor/releases/download/${MC_MONITOR_VERSION}/mc-monitor_${MC_MONITOR_VERSION}_${TARGETOS}_${TARGETARCH}${TARGETVARIANT}.tar.gz \
+  | tar -xzf - -C /usr/local/bin mc-monitor
 
 # renovate: datasource=github-releases packageName=itzg/mc-server-runner
 ARG MC_SERVER_RUNNER_VERSION=1.14.4
-RUN easy-add --var os=${TARGETOS} --var arch=${TARGETARCH}${TARGETVARIANT} \
-  --var version=${MC_SERVER_RUNNER_VERSION} --var app=mc-server-runner --file {{.app}} \
-  --from ${GITHUB_BASEURL}/itzg/{{.app}}/releases/download/{{.version}}/{{.app}}_{{.version}}_{{.os}}_{{.arch}}.tar.gz
+RUN curl -fsSL ${GITHUB_BASEURL}/itzg/mc-server-runner/releases/download/${MC_SERVER_RUNNER_VERSION}/mc-server-runner_${MC_SERVER_RUNNER_VERSION}_${TARGETOS}_${TARGETARCH}${TARGETVARIANT}.tar.gz \
+  | tar -xzf - -C /usr/local/bin mc-server-runner
 
 # renovate: datasource=github-releases packageName=itzg/mc-image-helper versioning=loose
 ARG MC_HELPER_VERSION=1.55.4
