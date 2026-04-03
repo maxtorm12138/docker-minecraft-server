@@ -10,7 +10,6 @@ apk add --no-cache -U \
     coreutils \
     findutils \
     procps \
-    shadow \
     bash \
     curl \
     jq \

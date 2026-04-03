@@ -13,7 +13,6 @@ ARG FORCE_INSTALL_PACKAGES=1
 RUN --mount=target=/build,source=build \
     TARGET=${TARGETARCH}${TARGETVARIANT} \
     /build/run.sh install-packages
-COPY --from=tianon/gosu /gosu /usr/local/bin/
 
 RUN --mount=target=/build,source=build \
     /build/run.sh setup-user
@@ -43,12 +42,13 @@ RUN curl -fsSL ${MC_HELPER_BASE_URL}/mc-image-helper-${MC_HELPER_VERSION}.tgz \
     && ln -s /usr/share/mc-image-helper-${MC_HELPER_VERSION}/ /usr/share/mc-image-helper \
     && ln -s /usr/share/mc-image-helper/bin/mc-image-helper /usr/bin
 
+RUN mkdir -p /data && chown 1000:1000 /data
 VOLUME ["/data"]
 WORKDIR /data
 
 STOPSIGNAL SIGTERM
 
-ENV TYPE=GTNH VERSION=LATEST EULA="" UID=1000 GID=1000 LC_ALL=en_US.UTF-8
+ENV TYPE=GTNH VERSION=LATEST EULA="" LC_ALL=en_US.UTF-8
 
 COPY --chmod=755 scripts/start* /image/scripts/
 
@@ -60,6 +60,7 @@ RUN curl -fsSL -o /image/Log4jPatcher.jar https://github.com/CreeperHost/Log4jPa
 
 RUN dos2unix /image/scripts/start*
 
+USER 1000:1000
 ENTRYPOINT [ "/image/scripts/start" ]
 HEALTHCHECK --start-period=2m --retries=2 --interval=30s CMD mc-health
 
