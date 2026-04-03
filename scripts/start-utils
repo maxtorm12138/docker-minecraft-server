@@ -517,30 +517,6 @@ function usesPlugins() {
   fi
 }
 
-function resolveVersion() {
-  givenVersion="$VERSION"
-  # shellcheck disable=SC2153
-  if ! VERSION=$(mc-image-helper resolve-minecraft-version "$VERSION"); then
-    exit 2
-  fi
-  log "Resolved version given ${givenVersion} into ${VERSION}"
-}
-
-function resolveFamily() {
-  case "$TYPE" in
-  PAPER | SPIGOT | BUKKIT | CANYON | PUFFERFISH | PURPUR)
-    FAMILY=SPIGOT
-    ;;
-  FORGE)
-    FAMILY=FORGE
-    ;;
-  FABRIC | QUILT)
-    FAMILY=FABRIC
-    ;;
-  esac
-  export FAMILY
-}
-
 function ensureRemoveAllModsOff() {
   reason=${1?}
 

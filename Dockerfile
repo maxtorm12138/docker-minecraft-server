@@ -8,8 +8,6 @@ ARG TARGETARCH
 ARG TARGETVARIANT
 
 # The following three arg/env vars get used by the platform specific "install-packages" script
-ARG EXTRA_DEB_PACKAGES=""
-ARG EXTRA_DNF_PACKAGES=""
 ARG EXTRA_ALPINE_PACKAGES=""
 ARG FORCE_INSTALL_PACKAGES=1
 RUN --mount=target=/build,source=build \
@@ -70,7 +68,7 @@ WORKDIR /data
 STOPSIGNAL SIGTERM
 
 # End user MUST set EULA and change RCON_PASSWORD
-ENV TYPE=VANILLA VERSION=LATEST EULA="" UID=1000 GID=1000 LC_ALL=en_US.UTF-8
+ENV TYPE=GTNH VERSION=LATEST EULA="" UID=1000 GID=1000 LC_ALL=en_US.UTF-8
 
 COPY --chmod=755 scripts/start* /image/scripts/
 
